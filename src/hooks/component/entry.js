@@ -20,7 +20,11 @@ mobro.hooks.component("entry", (Component) => (props) => {
 
     return (
         <div style={style} className={"d-flex w-100"}>
-            <Grid components={mobro.utils.component.getComponentsFromConfig(layout)} gutter={12}/>
+            <Grid
+                components={mobro.utils.component.getComponentsFromConfig(layout)}
+                gutter={12}
+                cols={{lg: 24, md: 18, sm: 12, xs: 6, xxs: 2}}
+            />
         </div>
     );
 });
