@@ -9,7 +9,7 @@ module.exports = {
     },
 
     output: {
-        path: path.resolve(__dirname, "..", "mobro-desktop", "mobro-data", "public", "theme", "default", "dist"),
+        path: path.resolve(__dirname, "..", "mobro-desktop", "mobro-data", "public", "theme", "mobro", "dist"),
         filename: "[name].js"
     },
 
