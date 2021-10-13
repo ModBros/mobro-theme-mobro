@@ -1,3 +1,5 @@
+const Grid = mobro.hooks.getComponent('grid.grid');
+
 mobro.hooks.redux.mapStateToProps("entry", (event) => {
     event.mergeMapStateToProps({
         layoutConfig: mobro.reducers.layout.getLayoutConfig(event.getState())
@@ -7,7 +9,7 @@ mobro.hooks.redux.mapStateToProps("entry", (event) => {
 mobro.hooks.component("entry", (Component) => (props) => {
     const {
         layoutConfig,
-        ...rest
+        layout
     } = props;
 
     const style = {};
@@ -18,7 +20,7 @@ mobro.hooks.component("entry", (Component) => (props) => {
 
     return (
         <div style={style} className={"d-flex w-100"}>
-            <Component {...rest}/>
+            <Grid components={mobro.utils.component.getComponentsFromConfig(layout)} gutter={12}/>
         </div>
     );
 });

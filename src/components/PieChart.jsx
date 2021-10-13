@@ -1,98 +1,12 @@
-import {backColor, frontColor, loadDoughnutOrGauge, maxValue, redrawDoughnutOrGauge} from 'theme/utils/chart'
+import {
+    backColor, basicTextColor,
+    frontColor,
+    getColorForCurrentValue,
+    loadDoughnutOrGauge,
+    maxValue,
+    redrawDoughnutOrGauge
+} from 'theme/utils/chart'
 import Chart from 'theme/components/Chart.container'
-
-// function createOptions(config, layoutConfig, channelData) {
-//     return {
-//         colors: [frontColor(config)],
-//         chart: {
-//             type: 'column',
-//             inverted: true,
-//             polar: true,
-//             backgroundColor: 'rgba(0, 0, 0, 0)',
-//             margin: [0, 0, 0, 0],
-//             spacing: [0, 0, 0, 0],
-//             events: {
-//                 load: loadDoughnutOrGauge(config, layoutConfig),
-//                 redraw: redrawDoughnutOrGauge(config, layoutConfig, channelData)
-//             },
-//             animation: {
-//                 duration: 500
-//             }
-//         },
-//         title: {
-//             text: ''
-//         },
-//         credits: {
-//             enabled: false
-//         },
-//         exporting: {
-//             enabled: false
-//         },
-//         subtitle: {
-//             text: ''
-//         },
-//         pane: {
-//             center: ['50%', '100%'],
-//             size: '200%',
-//             startAngle: -90,
-//             endAngle: 90,
-//             background: {
-//                 outerRadius: '100%',
-//                 innerRadius: '76%',
-//                 borderWidth: 0
-//             }
-//         },
-//         legend: {
-//             // no legend
-//             enabled: false
-//         },
-//         tooltip: {
-//             // no tooltip on hover
-//             enabled: false
-//         },
-//         xAxis: {
-//             // no borders, ticks what so ever
-//             visible: false,
-//         },
-//         yAxis: {
-//             min: 0,
-//             max: maxValue(config, channelData, 'maxValue'),
-//             // no borders, ticks what so ever
-//             visible: false,
-//             gridLineInterpolation: 'polygon',
-//         },
-//         plotOptions: {
-//             series: {
-//                 // necessary so that the start animation won't cause weird re-renderings
-//                 // due to unfinished animations
-//                 animation: false
-//             },
-//             column: {
-//                 // remove border from bar
-//                 borderWidth: 0
-//             }
-//         },
-//         series: [{
-//             data: [0]
-//         }]
-//     }
-// }
-
-function findMinMaxSettings(channelData, settings) {
-    let minMaxSettings = defaultMinMaxSettings;
-
-    if (mobro.enum.channelData.SENSOR_TYPE_TEMPERATURE !== channelData?.sensortype) {
-        return minMaxSettings;
-    }
-
-    settings?.hardware?.temperature?.forEach((item) => {
-        if (item.hardwaretype === channelData?._hardware?.hardwaretype) {
-            minMaxSettings = item;
-        }
-    });
-
-    return minMaxSettings;
-}
 
 function createOptions(configRef, layoutConfigRef, channelDataRef) {
     const max = maxValue(configRef, channelDataRef, 'max');
@@ -198,10 +112,16 @@ function DoughnutOrGauge(props) {
         <Chart
             {...chartProps}
             configKeyToListen={[
+                'showLabel',
+                'label',
                 'height',
                 'color',
                 'min',
-                'max',
+                'warning',
+                'warningColor',
+                'danger',
+                'dangerColor',
+                'max'
             ]}
             writeDataToSeries={(channelDataRef, optionsRef, configRef) => {
                 optionsRef.current.series[0].data = [parseFloat(mobro.utils.channelData.extractValue(channelDataRef.current))];
@@ -218,11 +138,30 @@ function DoughnutOrGauge(props) {
 
 function PieChart(props) {
     return (
-        <DoughnutOrGauge
+        <Chart
             {...props}
             height={props.inline ? 50 : null}
+            configKeyToListen={[
+                'showLabel',
+                'label',
+                'height',
+                'color',
+                'min',
+                'warning',
+                'warningColor',
+                'danger',
+                'dangerColor',
+                'max'
+            ]}
             createOptions={(...args) => createOptions(...args, props.settings)}
-            extractMaxValue={(...args) => maxValue(...args, 'max')}
+            writeDataToSeries={(channelDataRef, optionsRef, configRef) => {
+                optionsRef.current.series[0].data = [parseFloat(mobro.utils.channelData.extractValue(channelDataRef.current))];
+                optionsRef.current.colors = [getColorForCurrentValue(channelDataRef, configRef)];
+            }}
+            adaptOptions={(channelDataRef, optionsRef, configRef) => {
+                optionsRef.current.yAxis.max = maxValue(configRef, channelDataRef);
+                optionsRef.current.pane.background.backgroundColor = backColor(configRef);
+            }}
         />
     );
 }

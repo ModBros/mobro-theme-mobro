@@ -1,6 +1,6 @@
 import {useState, useRef} from 'react';
 import Chart from 'theme/components/Chart.container';
-import {defaultFontColor, maxValue, minValue} from 'theme/utils/chart'
+import {defaultFontColor, getColorForCurrentValue, maxValue, minValue} from 'theme/utils/chart'
 import {colorToRgba} from 'theme/utils/color'
 import {getWidgetFontColor, getWidgetFontFamily} from 'theme/utils/widget'
 
@@ -51,6 +51,7 @@ function createOptions(configRef, layoutConfigRef, channelDataRef, settings, opt
             title: {
                 text: undefined
             },
+            opposite: true,
             labels: {
                 style: {
                     fontFamily: getWidgetFontFamily(configRef.current, layoutConfigRef.current),
@@ -92,7 +93,7 @@ function createOptions(configRef, layoutConfigRef, channelDataRef, settings, opt
     }
 }
 
-function ChartValue(props) {
+function ChartLabel(props) {
     const {
         config
     } = props;
@@ -103,18 +104,20 @@ function ChartValue(props) {
         setChannelData(data);
     });
 
-    const label = config?.label ? config?.label : channelData?.label;
+    if(!config?.showLabel) {
+        return null;
+    }
+
+    const label = config?.label ? config?.label : mobro.utils.channelData.extractLabel(channelData);
 
     return (
         <div className={'w-100 d-flex align-items-center justify-content-between mb-2'}>
             <span className="text-left d-block">
                 {label}
-                &nbsp;-&nbsp;
-                <span>{mobro.utils.channelData.extractRawUnit(channelData)}</span>
             </span>
-            <h3 className="text-right">
-                {mobro.utils.channelData.extractValue(channelData)}
-            </h3>
+            <strong className="text-right">
+                {mobro.utils.channelData.extractValue(channelData)}<span>{mobro.utils.channelData.extractRawUnit(channelData)}</span>
+            </strong>
         </div>
     );
 }
@@ -129,13 +132,21 @@ function LineChart(props) {
 
     return (
         <div className={'d-flex flex-column w-100'} ref={container}>
+            <ChartLabel config={props.config}/>
+
             <Chart
                 {...chartProps}
                 createOptions={createOptions}
                 configKeyToListen={[
+                    'showLabel',
+                    'label',
                     'height',
                     'color',
                     'min',
+                    'warning',
+                    'warningColor',
+                    'danger',
+                    'dangerColor',
                     'max'
                 ]}
                 writeDataToSeries={(channelDataRef, optionsRef, configRef, layoutConfigRef, chartRef) => {
@@ -152,6 +163,8 @@ function LineChart(props) {
                     ];
 
                     chartRef.current?.chart?.series?.[0]?.addPoint(point, false, true);
+
+                    optionsRef.current.colors = [getColorForCurrentValue(channelDataRef, configRef)]
                 }}
                 adaptOptions={(channelDataRef, optionsRef, configRef) => {
                 }}

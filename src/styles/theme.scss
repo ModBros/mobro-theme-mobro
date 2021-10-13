@@ -1,11 +1,16 @@
 .app {
     font-size: 12px;
     background-color: #292933;
+    color: black;
 }
 
 .chart-container {
     width: 100%;
     position: relative;
+}
+
+.card {
+    border-radius: 0.25rem;
 }
 
 .component-body {
@@ -27,6 +32,7 @@
 
 h5 {
     font-size: 1rem;
+    font-weight: bold;
 }
 
 .pb-05 {

@@ -8,6 +8,12 @@ mobro.hooks.addDataComponent({
     icon: "widget.graph",
     component: BasicChart,
     config: {
+        showLabel: {
+            type: 'checkbox'
+        },
+        label: {
+            type: 'input'
+        },
         displayType: {
             type: "select",
             options: [
@@ -24,23 +30,36 @@ mobro.hooks.addDataComponent({
         color: {
             type: "color"
         },
-        minMax: {
-            type: "field-container",
-            children: [{
-                width: 6,
-                children: {
-                    min: {
-                        type: "numeric"
-                    }
+        limits: {
+            type: "fieldset",
+            label: "Limits",
+            collapsible: true,
+            collapsed: true,
+            children: {
+                min: {
+                    type: "numeric"
+                },
+                warning: {
+                    type: "numeric",
+                    info: "Threshold for yellow (warning)."
+                },
+                warningColor: {
+                    type: "color"
+                },
+                danger: {
+                    type: "numeric",
+                    info: "Threshold for red (danger)."
+                },
+                dangerColor: {
+                    type: "color"
+                },
+                max: {
+                    type: "numeric"
                 }
-            }, {
-                width: 6,
-                children: {
-                    max: {
-                        type: "numeric"
-                    }
-                }
-            }]
+            }
         }
+    },
+    defaultValues: {
+        showLabel: true
     }
 });
