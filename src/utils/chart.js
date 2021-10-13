@@ -85,7 +85,7 @@ export function redrawDoughnutOrGauge(
             })
             .css({
                 fontWeight: 'bold',
-                color: valueTextFontColor(configRef),
+                color: basicTextFontColor(configRef),
                 fontSize: `${valueFontSize}px`,
                 fontFamily: getWidgetFontFamily(configRef.current, layoutConfigRef.current)
             });

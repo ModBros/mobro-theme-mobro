@@ -60,6 +60,9 @@ mobro.hooks.addDataComponent({
         }
     },
     defaultValues: {
-        showLabel: true
+        showLabel: true,
+        color: {"r":0,"g":150,"b":64,"a":1},
+        warningColor: {"r":255,"g":193,"b":7,"a":1},
+        dangerColor: {"r":209,"g":17,"b":33,"a":1}
     }
 });
